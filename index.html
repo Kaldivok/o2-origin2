@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>O2 獸源 / ORIGIN</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <main class="cyber-shell">
+    <header class="cyber-header">
+      <div class="flex items-center gap-2">
+        <span class="text-base font-black tracking-wide text-white">O<sub class="text-xs">2</sub> 獸源</span>
+        <span class="mono text-[10px] text-slate-400">/ ORIGIN</span>
+        <span class="mono text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-600/40 border border-purple-400/50 text-purple-200">V2.3.14</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="btnSaveMgr" class="px-2 py-0.5 rounded-lg bg-slate-800/90 border border-cyan-500/50 text-[10px] font-bold text-cyan-300 hover:bg-slate-700">存檔</button>
+        <div class="mono text-[11px] font-bold text-amber-300">
+          源幣 <span id="hdrCoins">200</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="console-core">
+      <div class="lcd-bezel">
+        <div id="lcdIconStrip" class="lcd-icon-strip"></div>
+        <div class="lcd-canvas-wrap">
+          <canvas id="lcdCanvas" width="360" height="440"></canvas>
+          <div id="mapHudOverlay" class="map-hud-overlay hidden">
+            <button id="btnZoneDrops" class="map-drops-btn">本區掉寶</button>
+            <div id="vJoystick" class="joy-base" aria-label="虛擬搖桿">
+              <div id="vJoyKnob" class="joy-knob"></div>
+            </div>
+            <div class="map-right-hud">
+              <div id="mapPurifiedCount" class="map-purify-badge">已淨化 0</div>
+              <button id="btnMapAuto" class="map-auto-btn">AUTO 巡邏</button>
+            </div>
+          </div>
+        </div>
+        <div class="lcd-bottom-controls">
+          <button id="btnSpeed2x" class="lcd-pill-btn">速度 ×1</button>
+          <button id="btnAiChain" class="lcd-pill-btn">AI 連戰</button>
+        </div>
+      </div>
+
+      <div class="abc-ridge">
+        <button id="btnA" class="o2-btn" title="選擇">A</button>
+        <button id="btnB" class="o2-btn" title="確認">B</button>
+        <button id="btnC" class="o2-btn" title="取消">C</button>
+      </div>
+    </section>
+
+    <section id="dock-map" class="panel-box dock-panel hidden space-y-1.5">
+      <div class="grid grid-cols-2 gap-2 text-[10px] mono">
+        <div>
+          <div class="flex justify-between text-rose-300 font-bold mb-0.5"><span>HP</span><span id="mapHpText">78/78</span></div>
+          <div class="h-1.5 rounded-full bg-slate-800 overflow-hidden"><div id="mapHpFill" class="h-full bg-rose-500 transition-all" style="width:100%"></div></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-cyan-300 font-bold mb-0.5"><span>體力</span><span id="mapStamText">120/120</span></div>
+          <div class="h-1.5 rounded-full bg-slate-800 overflow-hidden"><div id="mapStamFill" class="h-full bg-cyan-400 transition-all" style="width:100%"></div></div>
+        </div>
+      </div>
+      <div id="mapQuickBar" class="grid grid-cols-3 gap-1.5"></div>
+    </section>
+
+    <section id="dock-equip" class="panel-box dock-panel hidden space-y-2">
+      <div id="equipSlotsGrid" class="grid grid-cols-2 gap-1.5"></div>
+      <div class="border-t border-slate-800 pt-2">
+        <div class="flex items-center justify-between mb-1.5"><span class="text-xs font-bold text-amber-300">裝備庫存</span><button id="btnDismantleLow" class="action-btn px-2 py-0.5 text-[10px]">一鍵分解白/綠裝</button></div>
+        <div id="gearBagList" class="space-y-1.5"></div>
+      </div>
+    </section>
+
+    <section id="dock-dex" class="panel-box dock-panel hidden space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-bold text-white">持有個體 (B1~B3・G1~G4・M1~M4)</span>
+        <div class="flex gap-1"><button id="btnHatchNew" class="action-btn primary text-[10px]">召喚 B1</button><button id="btnHatchB2" class="action-btn primary text-[10px]">召喚 B2</button><button id="btnHatchB3" class="action-btn primary text-[10px]">召喚 B3</button></div>
+      </div>
+      <div id="monsterList" class="space-y-2"></div>
+    </section>
+
+    <section id="dock-shop" class="panel-box dock-panel hidden space-y-2.5">
+      <div class="grid grid-cols-3 gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800">
+        <button id="shopTabScenes" class="action-btn primary py-1 text-[10px]">場景商店</button>
+        <button id="shopTabItems" class="action-btn py-1 text-[10px]">道具商店</button>
+        <button id="shopTabBag" class="action-btn py-1 text-[10px]">背包倉庫</button>
+      </div>
+      <div id="sceneShopList" class="grid grid-cols-2 gap-2"></div>
+      <div id="itemShopWrap" class="hidden space-y-2">
+        <div id="shopList" class="space-y-1.5"></div>
+        <div class="pt-2 border-t border-slate-800 flex gap-1.5">
+          <input id="redeemInput" type="text" placeholder="兌換碼 (O2START2026)" class="mono flex-1 bg-slate-950 border border-slate-700 rounded-lg px-2 py-1 text-[11px] text-white uppercase" />
+          <button id="btnRedeem" class="action-btn primary px-3">兌換</button>
+        </div>
+      </div>
+      <div id="bagWhWrap" class="hidden space-y-2">
+        <div id="bagList" class="space-y-1.5"></div>
+        <div class="border-t border-slate-800 pt-2">
+          <div class="text-xs font-bold text-cyan-300 mb-1">倉庫</div>
+          <div id="warehouseList" class="space-y-1.5"></div>
+        </div>
+      </div>
+    </section>
+
+    <nav id="bottomDock" class="bottom-dock"></nav>
+  </main>
+
+  <div id="toastBox" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 bg-slate-900 border border-cyan-400/60 text-white text-xs font-bold px-4 py-2 rounded-full shadow-2xl z-50"></div>
+
+  <div id="modalOverlay" class="hidden fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-xs w-full p-4 space-y-3">
+      <h3 id="modalTitle" class="text-sm font-bold text-white">確認</h3>
+      <p id="modalBody" class="text-xs text-slate-300"></p>
+      <div class="flex justify-end gap-2">
+        <button id="modalCancelBtn" class="action-btn">取消</button>
+        <button id="modalConfirmBtn" class="action-btn danger">確定</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/icons.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/battle.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>
